@@ -1,31 +1,34 @@
 package order.table;
 
-import order.table.service.WriterService;
-import order.table.service.impl.OperationServiceImpl;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import order.table.service.OperationService;
+import order.table.service.impl.OrderServiceImpl;
+import order.table.service.impl.QueryServiceImpl;
+import order.table.service.impl.UpdateServiceImpl;
+import order.table.service.impl.WriterServiceImpl;
 
 public class OperationsDispatcher {
     private static final int OPERATION_INDEX = 0;
     private static final String COMMA_SEPARATOR = ",";
-    private static final String UPGRADE_MARKER = "u";
-    private static final String QUERY_MARKER = "q";
-    private static final String ORDER_MARKER = "o";
-    private final OperationServiceImpl operationService;
-    private final WriterService writerService;
+    private static final Map<String, OperationService> operations = new HashMap<>();
+    private final OrderTable orderTable;
 
-    public OperationsDispatcher(OperationServiceImpl operationService, WriterService writerService) {
-        this.operationService = operationService;
-        this.writerService = writerService;
+    static {
+        operations.put("u", new UpdateServiceImpl());
+        operations.put("q", new QueryServiceImpl(new WriterServiceImpl()));
+        operations.put("o", new OrderServiceImpl());
     }
 
-    public void getOperation(String lineText) {
-        String[] lineValues = lineText.split(COMMA_SEPARATOR);
-        switch (lineValues[OPERATION_INDEX]) {
-            case UPGRADE_MARKER -> operationService.doUpdate(lineValues);
-            case QUERY_MARKER -> {
-                String queryResult = operationService.doQuery(lineValues);
-                writerService.writeToFile(queryResult);
-            }
-            case ORDER_MARKER -> operationService.doOrder(lineValues);
-        }
+    public OperationsDispatcher(OrderTable orderTable) {
+        this.orderTable = orderTable;
+    }
+
+    public void doOperation(List<String> linesList) {
+        linesList.forEach(line -> {
+            String[] lineValues = line.split(COMMA_SEPARATOR);
+            operations.get(lineValues[OPERATION_INDEX]).doOperation(lineValues, orderTable);
+        });
     }
 }

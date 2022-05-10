@@ -1,7 +1,8 @@
 package order.table.service;
 
 import java.io.File;
+import java.util.List;
 
 public interface ReaderService {
-    void readFile(File file);
+    List<String> readFile(File file);
 }
