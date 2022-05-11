@@ -12,10 +12,11 @@ import order.table.service.impl.WriterServiceImpl;
 public class OperationsDispatcher {
     private static final int OPERATION_INDEX = 0;
     private static final String COMMA_SEPARATOR = ",";
-    private static final Map<String, OperationService> operations = new HashMap<>();
+    private static final Map<String, OperationService> operations;
     private final OrderTable orderTable;
 
     static {
+        operations = new HashMap<>();
         operations.put("u", new UpdateServiceImpl());
         operations.put("q", new QueryServiceImpl(new WriterServiceImpl()));
         operations.put("o", new OrderServiceImpl());

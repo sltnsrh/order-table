@@ -6,15 +6,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import order.table.OperationsDispatcher;
 import order.table.service.ReaderService;
 
 public class ReaderServiceImpl implements ReaderService {
-    private final OperationsDispatcher operationsDispatcher;
-
-    public ReaderServiceImpl(OperationsDispatcher operationsDispatcher) {
-        this.operationsDispatcher = operationsDispatcher;
-    }
 
     @Override
     public List<String> readFile(File file) {
